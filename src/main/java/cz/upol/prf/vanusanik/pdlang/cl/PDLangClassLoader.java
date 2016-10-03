@@ -26,7 +26,5 @@
 package cz.upol.prf.vanusanik.pdlang.cl;
 
 public class PDLangClassLoader extends ClassLoader {
-	
-	
 
 }
