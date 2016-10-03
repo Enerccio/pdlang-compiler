@@ -29,6 +29,13 @@
     	<version>0.0.1</version>
     </dependency>
     
+    <!-- TOOLS -->
+    <dependency>
+    	<groupId>cz.upol.prf.vanusanik.pdlang</groupId>
+    	<artifactId>pdlang-tools</artifactId>
+    	<version>0.0.1</version>
+    </dependency>
+    
     <!-- LOG4J -->
     <dependency>
 	    <groupId>log4j</groupId>
