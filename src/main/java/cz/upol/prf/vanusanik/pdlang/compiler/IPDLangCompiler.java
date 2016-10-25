@@ -25,6 +25,23 @@
  */
 package cz.upol.prf.vanusanik.pdlang.compiler;
 
+import java.io.File;
+
+import cz.upol.prf.vanusanik.pdlang.path.PDPathDescriptor;
+
 public interface IPDLangCompiler {
+	
+	/**
+	 * Registers path descriptor and appends it to the available paths
+	 * @param descriptor
+	 */
+	public void registerPDPath(PDPathDescriptor descriptor);
+	
+	/**
+	 * Registers path as path descriptor. Equivalent of calling 
+	 * registerPDPath(new FileSystemPDPathDescriptor(systemPath))
+	 * @param systemPath
+	 */
+	public void registerPDPath(File systemPath);
 
 }

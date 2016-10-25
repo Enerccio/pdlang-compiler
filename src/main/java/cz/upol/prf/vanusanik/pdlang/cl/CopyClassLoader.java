@@ -42,6 +42,10 @@ public class CopyClassLoader extends ClassLoader {
 	private Map<String, Pair<String, ClassLoader>> loans = 
 			new HashMap<String, Pair<String, ClassLoader>>();
 	
+	public CopyClassLoader(ClassLoader parent) {
+		super(parent);
+	}
+
 	/**
 	 * Adds loaned class as sysname
 	 * @param sysname
