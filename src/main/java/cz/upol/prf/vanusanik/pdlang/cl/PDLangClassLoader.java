@@ -25,6 +25,7 @@
  */
 package cz.upol.prf.vanusanik.pdlang.cl;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,6 +43,10 @@ public class PDLangClassLoader extends CopyClassLoader {
 	public PDLangClassLoader(ClassLoader parent) {
 		super(parent);
 	}
+	
+	public void addBuildPath(File bp) {
+		compiler.registerPDPath(bp);
+	}
 
 	@Override
 	protected Class<?> findClass(String clsName) 
@@ -58,13 +63,21 @@ public class PDLangClassLoader extends CopyClassLoader {
 		if (className.startsWith(Constants.PD_SEPARATOR + "inv")) {
 			return getInvoker(className.substring(4));
 		}
-		return getPDLangDefinition(className);
+		try {
+			return getPDLangDefinition(className);
+		} catch (Exception e) {
+			throw new ClassNotFoundException("Failed to load class " + className, e);
+		}
 	}
 	
+	private Map<String, Class<?>> classCache
+		= new HashMap<String, Class<?>>();
 
-	private Class<?> getPDLangDefinition(String className) {
-		// TODO Auto-generated method stub
-		return null;
+	private Class<?> getPDLangDefinition(String className) throws Exception {
+		if (!classCache.containsKey(className)) {
+			classCache.put(className, compiler.compile(className, classCache, this));
+		}
+		return classCache.get(className);
 	}
 	
 	private Map<String, Class<?>> invokerCache = 
@@ -87,6 +100,4 @@ public class PDLangClassLoader extends CopyClassLoader {
 		this.debug = debug;
 	}
 	
-	
-
 }

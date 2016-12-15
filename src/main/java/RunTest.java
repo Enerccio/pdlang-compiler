@@ -11,6 +11,9 @@ public class RunTest {
 		System.out.println(f.getAbsolutePath());
 		
 		PDLangClassLoader c = new PDLangClassLoader(Thread.currentThread().getContextClassLoader());
+		
+		c.addBuildPath(f);
+		
 		c.setDebug(true);
 		Class<?> i = c.loadClass("~pd~invaIi");
 		System.out.println(i);
@@ -24,6 +27,8 @@ public class RunTest {
 		System.out.println(i);
 		i = c.loadClass("~pd~inv⟪T⟫");
 		System.out.println(i);
+		
+		c.loadClass("~pdtest/test_module");
 	}
 
 }

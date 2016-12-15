@@ -6,7 +6,7 @@ public interface CompilerComponent<T extends ParserRuleContext> {
 
 	public Class<? extends T> getRegisterHandler();
 	
-	public void compile(T sytaxElement, IPDLangCompiler compiler, 
+	public Object compile(T syntaxElement, IPDLangCompiler compiler, 
 			CompilerState state) throws Exception;
 	
 }

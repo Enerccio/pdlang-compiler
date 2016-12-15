@@ -26,7 +26,11 @@
 package cz.upol.prf.vanusanik.pdlang.compiler;
 
 import java.io.File;
+import java.util.Map;
 
+import org.antlr.v4.runtime.ParserRuleContext;
+
+import cz.upol.prf.vanusanik.pdlang.cl.PDLangClassLoader;
 import cz.upol.prf.vanusanik.pdlang.path.PDPathDescriptor;
 
 public interface IPDLangCompiler {
@@ -43,5 +47,12 @@ public interface IPDLangCompiler {
 	 * @param systemPath
 	 */
 	public void registerPDPath(File systemPath);
+	
+	
+	public <T extends ParserRuleContext> Object 
+			next(T syntaxElement, IPDLangCompiler compiler, CompilerState state) throws Exception;
+
+	public Class<?> compile(String className, Map<String, 
+			Class<?>> classCache, PDLangClassLoader classLoader) throws Exception;
 
 }
