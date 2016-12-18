@@ -1,4 +1,5 @@
+import test.test2();
 
-module test_module() {
+module test_module(int : a) {
 
 }

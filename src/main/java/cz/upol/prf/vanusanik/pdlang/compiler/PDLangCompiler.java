@@ -17,6 +17,10 @@ import cz.upol.inf.vanusanik.pdlang.parser.pdlangLexer;
 import cz.upol.inf.vanusanik.pdlang.parser.pdlangParser;
 import cz.upol.prf.vanusanik.pdlang.cl.PDLangClassLoader;
 import cz.upol.prf.vanusanik.pdlang.compiler.cunits.CompilationUnitCC;
+import cz.upol.prf.vanusanik.pdlang.compiler.cunits.IdentifierCC;
+import cz.upol.prf.vanusanik.pdlang.compiler.cunits.ImportsCC;
+import cz.upol.prf.vanusanik.pdlang.compiler.cunits.ModuleDefinitionCC;
+import cz.upol.prf.vanusanik.pdlang.compiler.cunits.SimpleImportCC;
 import cz.upol.prf.vanusanik.pdlang.path.FileSystemPDPathDescriptor;
 import cz.upol.prf.vanusanik.pdlang.path.PDPathDescriptor;
 
@@ -32,6 +36,11 @@ public class PDLangCompiler implements IPDLangCompiler {
 	
 	protected void init() {
 		addCompilerUnit(new CompilationUnitCC());
+		addCompilerUnit(new ImportsCC());
+		addCompilerUnit(new SimpleImportCC());
+		addCompilerUnit(new ModuleDefinitionCC());
+		
+		addCompilerUnit(new IdentifierCC());
 	}
 
 	private void addCompilerUnit(CompilerComponent<? extends ParserRuleContext> cc) {

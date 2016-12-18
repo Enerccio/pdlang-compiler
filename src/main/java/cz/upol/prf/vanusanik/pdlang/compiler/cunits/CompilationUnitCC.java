@@ -13,11 +13,15 @@ public class CompilationUnitCC implements CompilerComponent<CompilationUnitConte
 
 	public Object compile(CompilationUnitContext syntaxElement, IPDLangCompiler compiler, CompilerState state)
 			throws Exception {
-		// resolve imports
-		
-		// continue with compilation
-		return compiler.next(syntaxElement.moduleDefinition(), compiler, state);
+		state.pushResolveContext();
+		try {
+			// resolve imports
+			compiler.next(syntaxElement.imports(), compiler, state);
+			// continue with compilation
+			return compiler.next(syntaxElement.moduleDefinition(), compiler, state);
+		} finally {
+			state.popResolveContext();
+		}
 	}
-
 
 }
