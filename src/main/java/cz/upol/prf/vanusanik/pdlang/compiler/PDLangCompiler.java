@@ -17,9 +17,11 @@ import cz.upol.inf.vanusanik.pdlang.parser.pdlangLexer;
 import cz.upol.inf.vanusanik.pdlang.parser.pdlangParser;
 import cz.upol.prf.vanusanik.pdlang.cl.PDLangClassLoader;
 import cz.upol.prf.vanusanik.pdlang.compiler.cunits.CompilationUnitCC;
+import cz.upol.prf.vanusanik.pdlang.compiler.cunits.FqNameCC;
 import cz.upol.prf.vanusanik.pdlang.compiler.cunits.IdentifierCC;
 import cz.upol.prf.vanusanik.pdlang.compiler.cunits.ImportsCC;
 import cz.upol.prf.vanusanik.pdlang.compiler.cunits.ModuleDefinitionCC;
+import cz.upol.prf.vanusanik.pdlang.compiler.cunits.ModuleNameCC;
 import cz.upol.prf.vanusanik.pdlang.compiler.cunits.SimpleImportCC;
 import cz.upol.prf.vanusanik.pdlang.path.FileSystemPDPathDescriptor;
 import cz.upol.prf.vanusanik.pdlang.path.PDPathDescriptor;
@@ -38,6 +40,8 @@ public class PDLangCompiler implements IPDLangCompiler {
 		addCompilerUnit(new CompilationUnitCC());
 		addCompilerUnit(new ImportsCC());
 		addCompilerUnit(new SimpleImportCC());
+		addCompilerUnit(new ModuleNameCC());
+		addCompilerUnit(new FqNameCC());
 		addCompilerUnit(new ModuleDefinitionCC());
 		
 		addCompilerUnit(new IdentifierCC());
@@ -84,7 +88,19 @@ public class PDLangCompiler implements IPDLangCompiler {
 		parser.addErrorListener(new ThrowingErrorListener(className));
 		
 		CompilerState state = new CompilerState();
+		state.setSource(findPhysicalDataName(className));
 		next(parser.compilationUnit(), this, state);
+		
+		return null;
+	}
+
+	private String findPhysicalDataName(String className) {
+		String cpath = CompilerUtils.removeColon(className);
+		for (PDPathDescriptor pathDesc : descriptors) {
+			if (pathDesc.hasPath(cpath)) {
+				return pathDesc.getModuleName(cpath);
+			}
+		}
 		
 		return null;
 	}

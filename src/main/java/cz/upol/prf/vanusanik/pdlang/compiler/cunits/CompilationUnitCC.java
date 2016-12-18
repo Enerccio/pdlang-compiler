@@ -14,6 +14,7 @@ public class CompilationUnitCC implements CompilerComponent<CompilationUnitConte
 	public Object compile(CompilationUnitContext syntaxElement, IPDLangCompiler compiler, CompilerState state)
 			throws Exception {
 		state.pushResolveContext();
+		state.pushClassContext();
 		try {
 			// resolve imports
 			compiler.next(syntaxElement.imports(), compiler, state);
@@ -21,6 +22,7 @@ public class CompilationUnitCC implements CompilerComponent<CompilationUnitConte
 			return compiler.next(syntaxElement.moduleDefinition(), compiler, state);
 		} finally {
 			state.popResolveContext();
+			state.popClassContext();
 		}
 	}
 

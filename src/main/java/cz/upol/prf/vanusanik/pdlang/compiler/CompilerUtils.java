@@ -6,6 +6,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 
+import cz.upol.prf.vanusanik.pdlang.tools.Constants;
+
 public class CompilerUtils {
 
 	public static String removeLastSlashedElement(String className) {
@@ -19,6 +21,23 @@ public class CompilerUtils {
 		if (!className.contains(":"))
 			return className;
 		return className.substring(0, className.lastIndexOf(":"));
+	}
+
+	public static String asJavaName(String moduleName) {
+		String[] elements = moduleName.split(Pattern.quote("."));
+		return Constants.PD_CLASSTYPE + StringUtils.join(elements, "/");
+	}
+
+	public static String removeLastDot(String moduleName) {
+		if (!moduleName.contains("."))
+			return moduleName;
+		return moduleName.substring(0, moduleName.lastIndexOf("."));
+	}
+
+	public static String moduleName(String moduleName) {
+		if (!moduleName.contains("."))
+			return moduleName;
+		return moduleName.substring(moduleName.lastIndexOf(".")+1);
 	}
 
 }

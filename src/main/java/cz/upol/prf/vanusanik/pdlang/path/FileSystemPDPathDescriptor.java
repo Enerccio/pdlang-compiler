@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 
 public class FileSystemPDPathDescriptor implements PDPathDescriptor {
@@ -63,4 +64,8 @@ public class FileSystemPDPathDescriptor implements PDPathDescriptor {
 		return modules;
 	}
 
+	public String getModuleName(String cpath) {
+		File moduleFile = asModuleFile(cpath);
+		return FilenameUtils.getName(moduleFile.getAbsolutePath());
+	}
 }

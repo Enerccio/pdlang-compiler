@@ -1,10 +1,13 @@
 package cz.upol.prf.vanusanik.pdlang.compiler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.antlr.v4.runtime.ParserRuleContext;
+
+import cz.upol.prf.vanusanik.pdlang.tools.Pair;
 
 public class CompilerState {
 	
@@ -33,8 +36,15 @@ public class CompilerState {
 	public ClassContext getClassContext(int n) {
 		if (n > classContext.size())
 			return null;
-		return classContext.get(classContext.size()-n);
+		return classContext.get(classContext.size()-(1+n));
 	}
+	
+	public void popClassContext() {
+		classContext.pop();
+	}
+	
+	private HashMap<String, TypeInformation> typeMap = 
+			new HashMap<String, TypeInformation>();
 	
 	private LinkedList<ResolveContext> resolveContext = new LinkedList<ResolveContext>();
 
@@ -46,17 +56,47 @@ public class CompilerState {
 		resolveContext.pop();
 	}
 	
-	public TypeInformation resolveType(String identifier) {
+	public Pair<Integer, TypeInformation> resolveType(String identifier) {
 		List<ResolveContext> reverse = new ArrayList<ResolveContext>(resolveContext);
+		int level = 0;
 		for (ResolveContext rc : reverse) {
 			if (rc.hasIdentifier(identifier)) {
-				return rc.resolveType(identifier);
+				return Pair.makePair(level, rc.resolveType(identifier));
 			}
+			++level;
 		}
 		return null;
 	}
 	
 	public void addType(TypeInformation type, String identifier) {
 		resolveContext.peekLast().addType(type, identifier);
+	}
+	
+	private String source;
+
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
+	}
+
+	public HashMap<String, TypeInformation> getTypeMap() {
+		return typeMap;
+	}
+
+	public void setTypeMap(HashMap<String, TypeInformation> typeMap) {
+		this.typeMap = typeMap;
+	}
+	
+	private String packageName;
+
+	public String getPackage() {
+		return packageName;
+	}
+	
+	public void setPackage(String packageName) {
+		this.packageName = packageName;
 	}
 }

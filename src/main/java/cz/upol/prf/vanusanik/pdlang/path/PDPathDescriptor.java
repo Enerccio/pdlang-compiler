@@ -11,4 +11,6 @@ public interface PDPathDescriptor {
 	
 	public Collection<? extends String> getAvailableModules();
 
+	public String getModuleName(String cpath);
+
 }
