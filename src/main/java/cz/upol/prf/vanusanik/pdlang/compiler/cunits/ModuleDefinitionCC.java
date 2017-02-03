@@ -9,7 +9,7 @@ import cz.upol.prf.vanusanik.pdlang.compiler.ClassContext;
 import cz.upol.prf.vanusanik.pdlang.compiler.CompilerComponent;
 import cz.upol.prf.vanusanik.pdlang.compiler.CompilerState;
 import cz.upol.prf.vanusanik.pdlang.compiler.CompilerUtils;
-import cz.upol.prf.vanusanik.pdlang.compiler.IPDLangCompiler;
+import cz.upol.prf.vanusanik.pdlang.compiler.PDLangCompiler;
 import cz.upol.prf.vanusanik.pdlang.compiler.TypeInformation;
 
 public class ModuleDefinitionCC implements CompilerComponent<ModuleDefinitionContext>, Opcodes {
@@ -18,8 +18,8 @@ public class ModuleDefinitionCC implements CompilerComponent<ModuleDefinitionCon
 		return ModuleDefinitionContext.class;
 	}
 
-	@SuppressWarnings("unchecked")
-	public Object compile(ModuleDefinitionContext syntaxElement, IPDLangCompiler compiler, CompilerState state)
+	@SuppressWarnings({ "unchecked", "unused" })
+	public Object compile(ModuleDefinitionContext syntaxElement, PDLangCompiler compiler, CompilerState state)
 			throws Exception {
 		
 		ClassContext ctx = state.getClassContext();

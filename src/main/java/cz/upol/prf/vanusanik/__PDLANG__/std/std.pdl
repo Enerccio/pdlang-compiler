@@ -1,0 +1,5 @@
+// Standard library main entry point module
+
+module std() {
+
+}

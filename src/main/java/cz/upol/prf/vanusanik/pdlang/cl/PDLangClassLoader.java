@@ -29,19 +29,22 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import cz.upol.prf.vanusanik.pdlang.compiler.IPDLangCompiler;
-import cz.upol.prf.vanusanik.pdlang.compiler.InvokerCompiler;
 import cz.upol.prf.vanusanik.pdlang.compiler.PDLangCompiler;
+import cz.upol.prf.vanusanik.__PDLANG__.StdlibLoader;
+import cz.upol.prf.vanusanik.pdlang.compiler.InvokerCompiler;
+import cz.upol.prf.vanusanik.pdlang.compiler.PDLangCompilerBean;
+import cz.upol.prf.vanusanik.pdlang.path.InternalPDPathDescriptor;
 import cz.upol.prf.vanusanik.pdlang.tools.Constants;
 
 public class PDLangClassLoader extends CopyClassLoader {
 	
-	private IPDLangCompiler compiler = new PDLangCompiler();
+	private PDLangCompiler compiler = new PDLangCompilerBean();
 	private InvokerCompiler invCompiler = new InvokerCompiler();
 	private boolean debug;
 	
 	public PDLangClassLoader(ClassLoader parent) {
 		super(parent);
+		compiler.registerPDPath(new InternalPDPathDescriptor(StdlibLoader.class));
 	}
 	
 	public void addBuildPath(File bp) {

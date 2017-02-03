@@ -12,7 +12,7 @@ public class RunTest {
 		
 		PDLangClassLoader c = new PDLangClassLoader(Thread.currentThread().getContextClassLoader());
 		
-		c.addBuildPath(f);
+		//c.addBuildPath(f);
 		
 		c.setDebug(true);
 		Class<?> i = c.loadClass("~pd~invaIi");
@@ -28,7 +28,8 @@ public class RunTest {
 		i = c.loadClass("~pd~inv⟪T⟫");
 		System.out.println(i);
 		
-		c.loadClass("~pdtest/test_module");
+		// c.loadClass("~pdtest/test_module");
+		c.loadClass("~pdstd/std");
 	}
 
 }

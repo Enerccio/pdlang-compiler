@@ -3,7 +3,7 @@ package cz.upol.prf.vanusanik.pdlang.compiler.cunits;
 import cz.upol.inf.vanusanik.pdlang.parser.pdlangParser.CompilationUnitContext;
 import cz.upol.prf.vanusanik.pdlang.compiler.CompilerComponent;
 import cz.upol.prf.vanusanik.pdlang.compiler.CompilerState;
-import cz.upol.prf.vanusanik.pdlang.compiler.IPDLangCompiler;
+import cz.upol.prf.vanusanik.pdlang.compiler.PDLangCompiler;
 
 public class CompilationUnitCC implements CompilerComponent<CompilationUnitContext> {
 
@@ -11,7 +11,7 @@ public class CompilationUnitCC implements CompilerComponent<CompilationUnitConte
 		return CompilationUnitContext.class;
 	}
 
-	public Object compile(CompilationUnitContext syntaxElement, IPDLangCompiler compiler, CompilerState state)
+	public Object compile(CompilationUnitContext syntaxElement, PDLangCompiler compiler, CompilerState state)
 			throws Exception {
 		state.pushResolveContext();
 		state.pushClassContext();

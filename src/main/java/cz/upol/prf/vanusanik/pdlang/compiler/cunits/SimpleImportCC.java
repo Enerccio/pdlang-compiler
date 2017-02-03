@@ -4,7 +4,7 @@ import cz.upol.inf.vanusanik.pdlang.parser.pdlangParser.SimpleImportContext;
 import cz.upol.prf.vanusanik.pdlang.compiler.CompilerComponent;
 import cz.upol.prf.vanusanik.pdlang.compiler.CompilerState;
 import cz.upol.prf.vanusanik.pdlang.compiler.CompilerUtils;
-import cz.upol.prf.vanusanik.pdlang.compiler.IPDLangCompiler;
+import cz.upol.prf.vanusanik.pdlang.compiler.PDLangCompiler;
 import cz.upol.prf.vanusanik.pdlang.compiler.TypeInformation;
 import cz.upol.prf.vanusanik.pdlang.compiler.TypeInformation.Type;
 
@@ -14,7 +14,7 @@ public class SimpleImportCC implements CompilerComponent<SimpleImportContext> {
 		return SimpleImportContext.class;
 	}
 
-	public Object compile(SimpleImportContext syntaxElement, IPDLangCompiler compiler, CompilerState state)
+	public Object compile(SimpleImportContext syntaxElement, PDLangCompiler compiler, CompilerState state)
 			throws Exception {
 		
 		String moduleName = (String)compiler.next(syntaxElement.moduleName(), compiler, state);
