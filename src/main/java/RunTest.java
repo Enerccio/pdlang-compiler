@@ -2,34 +2,27 @@
 
 import java.io.File;
 
+import cz.upol.prf.vanusanik.PDLang;
 import cz.upol.prf.vanusanik.pdlang.cl.PDLangClassLoader;
+import cz.upol.prf.vanusanik.pdlang.external.ExternalModuleHolder;
 
 public class RunTest {
 	
+	@SuppressWarnings("unused")
 	public static void main(String[] args) throws ClassNotFoundException {
 		File f = new File("src/test/pdl");
 		System.out.println(f.getAbsolutePath());
 		
-		PDLangClassLoader c = new PDLangClassLoader(Thread.currentThread().getContextClassLoader());
+		PDLang ctx = PDLang.getHandle();
+		ctx.init(Thread.currentThread().getContextClassLoader());
 		
-		//c.addBuildPath(f);
-		
+		PDLangClassLoader c = ctx.getClassLoader();
 		c.setDebug(true);
-		Class<?> i = c.loadClass("~pd~invaIi");
-		System.out.println(i);
-		i = c.loadClass("~pd~invaIi⟪D⟫");
-		System.out.println(i);
-		i = c.loadClass("~pd~invD");
-		System.out.println(i);
-		i = c.loadClass("~pd~invT");
-		System.out.println(i);
-		i = c.loadClass("~pd~invTTaBb⟪T⟫");
-		System.out.println(i);
-		i = c.loadClass("~pd~inv⟪T⟫");
-		System.out.println(i);
 		
-		// c.loadClass("~pdtest/test_module");
-		c.loadClass("~pdstd/std");
+		
+		ExternalModuleHolder h = ctx.getModule("std.std");
+		
+		// c.loadClass("~pdtest/test_module");;
 	}
 
 }

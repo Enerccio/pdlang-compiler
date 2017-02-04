@@ -15,6 +15,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 import cz.upol.inf.vanusanik.pdlang.parser.pdlangLexer;
 import cz.upol.inf.vanusanik.pdlang.parser.pdlangParser;
+import cz.upol.prf.vanusanik.PDLang;
 import cz.upol.prf.vanusanik.pdlang.cl.ModuleDiscoveryManager;
 import cz.upol.prf.vanusanik.pdlang.cl.PDLangClassLoader;
 import cz.upol.prf.vanusanik.pdlang.compiler.cunits.CompilationUnitCC;
@@ -29,12 +30,14 @@ import cz.upol.prf.vanusanik.pdlang.path.PDPathDescriptor;
 
 public class PDLangCompilerBean implements PDLangCompiler {
 	
+	private PDLang context;
 	private List<PDPathDescriptor> descriptors = new ArrayList<PDPathDescriptor>();
 	private Map<Class<?>, CompilerComponent<? extends ParserRuleContext>> commands
 		= new HashMap<Class<?>, CompilerComponent<? extends ParserRuleContext>>();
 	private ModuleDiscoveryManager manager = new ModuleDiscoveryManager();
 	
-	public PDLangCompilerBean() {
+	public PDLangCompilerBean(PDLang context) {
+		this.context = context;
 		init();
 	}
 	
@@ -64,6 +67,10 @@ public class PDLangCompilerBean implements PDLangCompiler {
 
 	public void registerPDPath(File systemPath) {
 		registerPDPath(new FileSystemPDPathDescriptor(systemPath));
+	}
+	
+	public PDLang getContext() {
+		return context;
 	}
 
 	@SuppressWarnings("unchecked")

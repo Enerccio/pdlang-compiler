@@ -2,4 +2,6 @@
 
 module std() {
 
+	foreign type System;
+
 }
