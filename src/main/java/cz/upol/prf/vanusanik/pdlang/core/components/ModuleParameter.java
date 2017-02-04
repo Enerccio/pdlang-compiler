@@ -1,10 +1,10 @@
 package cz.upol.prf.vanusanik.pdlang.core.components;
 
 public class ModuleParameter {
-	
+
 	private String key;
 	private Object value;
-	
+
 	public ModuleParameter(String key, Object value) {
 		this.key = key;
 		this.value = value;

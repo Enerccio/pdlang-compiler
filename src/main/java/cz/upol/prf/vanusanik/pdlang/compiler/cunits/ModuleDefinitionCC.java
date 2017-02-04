@@ -21,16 +21,17 @@ public class ModuleDefinitionCC implements CompilerComponent<ModuleDefinitionCon
 	@SuppressWarnings({ "unchecked", "unused" })
 	public Object compile(ModuleDefinitionContext syntaxElement, PDLangCompiler compiler, CompilerState state)
 			throws Exception {
-		
+
 		ClassContext ctx = state.getClassContext();
 		String moduleName = (String) compiler.next(syntaxElement.identifier(), compiler, state);
-		
+
 		ctx.cw().visit(V1_8, ACC_PUBLIC + ACC_SUPER, CompilerUtils.asJavaName(state.getPackage() + moduleName), null,
 				"java/lang/Object", null);
 		ctx.cw().visitSource(state.getSource(), null);
-		
-		List<TypeInformation> initTypes = (List<TypeInformation>) compiler.next(syntaxElement.moduleInit(), compiler, state);
-		
+
+		List<TypeInformation> initTypes = (List<TypeInformation>) compiler.next(syntaxElement.moduleInit(), compiler,
+				state);
+
 		return null;
 	}
 

@@ -9,9 +9,9 @@ import java.util.Map;
 import cz.upol.prf.vanusanik.pdlang.tools.Utils;
 
 public class InternalPDPathDescriptor implements PDPathDescriptor {
-	
+
 	private FileSystemPDPathDescriptor exposed;
-	
+
 	private Class<?> placement;
 	private Map<String, byte[]> loadables = new HashMap<String, byte[]>();
 	private Map<String, String> names = new HashMap<String, String>();
@@ -25,14 +25,14 @@ public class InternalPDPathDescriptor implements PDPathDescriptor {
 		File jarFile = new File(placement.getProtectionDomain().getCodeSource().getLocation().getPath());
 		String placementPath = Utils.dots2slashes(placement.getPackage().getName());
 		if (jarFile.isFile()) {
-			
+
 		} else {
 			exposed = new FileSystemPDPathDescriptor(new File(jarFile, placementPath));
 		}
 	}
 
 	public boolean hasPath(String path) {
-		if (exposed != null) 
+		if (exposed != null)
 			return exposed.hasPath(path);
 		return loadables.containsKey(path);
 	}

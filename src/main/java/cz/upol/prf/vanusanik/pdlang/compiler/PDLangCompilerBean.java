@@ -16,7 +16,6 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import cz.upol.inf.vanusanik.pdlang.parser.pdlangLexer;
 import cz.upol.inf.vanusanik.pdlang.parser.pdlangParser;
 import cz.upol.prf.vanusanik.PDLang;
-import cz.upol.prf.vanusanik.pdlang.cl.ModuleDiscoveryManager;
 import cz.upol.prf.vanusanik.pdlang.cl.PDLangClassLoader;
 import cz.upol.prf.vanusanik.pdlang.compiler.cunits.CompilationUnitCC;
 import cz.upol.prf.vanusanik.pdlang.compiler.cunits.FqNameCC;
@@ -25,22 +24,22 @@ import cz.upol.prf.vanusanik.pdlang.compiler.cunits.ImportsCC;
 import cz.upol.prf.vanusanik.pdlang.compiler.cunits.ModuleDefinitionCC;
 import cz.upol.prf.vanusanik.pdlang.compiler.cunits.ModuleNameCC;
 import cz.upol.prf.vanusanik.pdlang.compiler.cunits.SimpleImportCC;
+import cz.upol.prf.vanusanik.pdlang.core.components.exceptions.CompilationException;
 import cz.upol.prf.vanusanik.pdlang.path.FileSystemPDPathDescriptor;
 import cz.upol.prf.vanusanik.pdlang.path.PDPathDescriptor;
 
 public class PDLangCompilerBean implements PDLangCompiler {
-	
+
 	private PDLang context;
 	private List<PDPathDescriptor> descriptors = new ArrayList<PDPathDescriptor>();
-	private Map<Class<?>, CompilerComponent<? extends ParserRuleContext>> commands
-		= new HashMap<Class<?>, CompilerComponent<? extends ParserRuleContext>>();
+	private Map<Class<?>, CompilerComponent<? extends ParserRuleContext>> commands = new HashMap<Class<?>, CompilerComponent<? extends ParserRuleContext>>();
 	private ModuleDiscoveryManager manager = new ModuleDiscoveryManager();
-	
+
 	public PDLangCompilerBean(PDLang context) {
 		this.context = context;
 		init();
 	}
-	
+
 	protected void init() {
 		addCompilerUnit(new CompilationUnitCC());
 		addCompilerUnit(new ImportsCC());
@@ -48,7 +47,7 @@ public class PDLangCompilerBean implements PDLangCompiler {
 		addCompilerUnit(new ModuleNameCC());
 		addCompilerUnit(new FqNameCC());
 		addCompilerUnit(new ModuleDefinitionCC());
-		
+
 		addCompilerUnit(new IdentifierCC());
 	}
 
@@ -57,10 +56,10 @@ public class PDLangCompilerBean implements PDLangCompiler {
 	}
 
 	public void registerPDPath(PDPathDescriptor descriptor) {
-		manager.scan(descriptor);
+		manager.scan(descriptor, context);
 		descriptors.add(descriptor);
 	}
-	
+
 	public ModuleDiscoveryManager getDiscoveryManager() {
 		return manager;
 	}
@@ -68,19 +67,18 @@ public class PDLangCompilerBean implements PDLangCompiler {
 	public void registerPDPath(File systemPath) {
 		registerPDPath(new FileSystemPDPathDescriptor(systemPath));
 	}
-	
+
 	public PDLang getContext() {
 		return context;
 	}
 
 	@SuppressWarnings("unchecked")
-	public Object next(ParserRuleContext syntaxElement, PDLangCompiler compiler, CompilerState state)
-			throws Exception {
+	public Object next(ParserRuleContext syntaxElement, PDLangCompiler compiler, CompilerState state) throws Exception {
 		state.pushTree(syntaxElement);
 		try {
 			if (commands.containsKey(syntaxElement.getClass())) {
-				return ((CompilerComponent<ParserRuleContext>)
-						commands.get(syntaxElement.getClass())).compile(syntaxElement, compiler, state);
+				return ((CompilerComponent<ParserRuleContext>) commands.get(syntaxElement.getClass()))
+						.compile(syntaxElement, compiler, state);
 			}
 			throw new RuntimeException("Missing compiler component for " + syntaxElement.getClass().getSimpleName());
 		} finally {
@@ -88,45 +86,49 @@ public class PDLangCompilerBean implements PDLangCompiler {
 		}
 	}
 
-	public Class<?> compile(String className, Map<String, Class<?>> classCache, PDLangClassLoader classLoader) 
+	public Class<?> compile(String className, Map<String, Class<?>> classCache, PDLangClassLoader classLoader)
 			throws Exception {
-		InputStream in = findPhysicalData(className);
-		
-		ANTLRInputStream is = new ANTLRInputStream(in);
-		pdlangLexer lexer = new pdlangLexer(is);
-		lexer.removeErrorListeners();
-		lexer.addErrorListener(new ThrowingErrorListener(className));
-		CommonTokenStream stream = new CommonTokenStream(lexer);
-		pdlangParser parser = new pdlangParser(stream);
-		parser.removeErrorListeners();
-		parser.addErrorListener(new ThrowingErrorListener(className));
-		
-		CompilerState state = new CompilerState();
-		state.setSource(findPhysicalDataName(className));
-		next(parser.compilationUnit(), this, state);
-		
-		return null;
+		try {
+			InputStream in = findPhysicalData(className);
+
+			ANTLRInputStream is = new ANTLRInputStream(in);
+			pdlangLexer lexer = new pdlangLexer(is);
+			lexer.removeErrorListeners();
+			lexer.addErrorListener(new ThrowingErrorListener(className));
+			CommonTokenStream stream = new CommonTokenStream(lexer);
+			pdlangParser parser = new pdlangParser(stream);
+			parser.removeErrorListeners();
+			parser.addErrorListener(new ThrowingErrorListener(className));
+
+			CompilerState state = new CompilerState();
+			state.setSource(findPhysicalDataName(className));
+			next(parser.compilationUnit(), this, state);
+
+			return null;
+		} catch (Exception e) {
+			throw new CompilationException(e);
+		}
 	}
 
-	private String findPhysicalDataName(String className) {
+	public String findPhysicalDataName(String className) {
 		String cpath = CompilerUtils.removeColon(className);
 		for (PDPathDescriptor pathDesc : descriptors) {
 			if (pathDesc.hasPath(cpath)) {
 				return pathDesc.getModuleName(cpath);
 			}
 		}
-		
+
 		return null;
 	}
 
-	private InputStream findPhysicalData(String className) throws IOException {
+	public InputStream findPhysicalData(String className) throws IOException {
 		String cpath = CompilerUtils.removeColon(className);
 		for (PDPathDescriptor pathDesc : descriptors) {
 			if (pathDesc.hasPath(cpath)) {
 				return new ByteArrayInputStream(pathDesc.getModule(cpath));
 			}
 		}
-		
+
 		return null;
 	}
 

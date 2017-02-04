@@ -13,20 +13,20 @@ import cz.upol.prf.vanusanik.pdlang.tools.Constants;
 import cz.upol.prf.vanusanik.pdlang.tools.Utils;
 
 public class InvokerCompiler implements Opcodes {
-	
-	private Map<Character, String> type2jtype = new HashMap<Character, String>(); 
+
+	private Map<Character, String> type2jtype = new HashMap<Character, String>();
 
 	public InvokerCompiler() {
 		type2jtype.put('(', null);
 		type2jtype.put('T', null);
-		
+
 		type2jtype.put('i', "I");
 		type2jtype.put('f', "F");
 		type2jtype.put('d', "D");
 		type2jtype.put('l', "J");
 		type2jtype.put('c', "C");
 		type2jtype.put('b', "Z");
-		
+
 		type2jtype.put('I', "Ljava/lang/Integer;");
 		type2jtype.put('F', "Ljava/lang/Float;");
 		type2jtype.put('D', "Ljava/lang/Double;");
@@ -35,25 +35,26 @@ public class InvokerCompiler implements Opcodes {
 		type2jtype.put('B', "Ljava/lang/Boolean;");
 		type2jtype.put('a', "Ljava/lang/Object;");
 	}
-	
+
 	/**
-	 * Compiles invoker from invoker code.
-	 * Invoker code is a string of types that invoker has with first type being return 
-	 * and other types being PDLang types
+	 * Compiles invoker from invoker code. Invoker code is a string of types
+	 * that invoker has with first type being return and other types being
+	 * PDLang types
+	 * 
 	 * @param cl
 	 * @param invDefinition
 	 * @return
-	 * @throws ClassNotFoundException 
+	 * @throws ClassNotFoundException
 	 */
 	public byte[] compileInvoker(PDLangClassLoader cl, String invDefinition) throws ClassNotFoundException {
-		String fullClassName = Constants.PD_CLASSTYPE_INVOKER+invDefinition;
+		String fullClassName = Constants.PD_CLASSTYPE_INVOKER + invDefinition;
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-		cw.visit(V1_8, ACC_PUBLIC + ACC_INTERFACE + ACC_ABSTRACT, fullClassName,
-				null, "java/lang/Object", new String[]{});
+		cw.visit(V1_8, ACC_PUBLIC + ACC_INTERFACE + ACC_ABSTRACT, fullClassName, null, "java/lang/Object",
+				new String[] {});
 		int idx = 0;
 		String returnType = null;
 		List<String> args = new ArrayList<String>();
-		
+
 		while (idx < invDefinition.length()) {
 			char current = invDefinition.charAt(idx++);
 			String elementType = type2jtype.get(current);
@@ -94,8 +95,8 @@ public class InvokerCompiler implements Opcodes {
 				}
 			}
 		}
-		cw.visitMethod(ACC_PUBLIC + ACC_ABSTRACT, "invoke", Utils.mkDesc(returnType, args), null, 
-				new String[]{"java/lang/Exception"});
+		cw.visitMethod(ACC_PUBLIC + ACC_ABSTRACT, "invoke", Utils.mkDesc(returnType, args), null,
+				new String[] { "java/lang/Exception" });
 		cw.visitEnd();
 		byte[] classData = cw.toByteArray();
 		if (cl.isDebug())

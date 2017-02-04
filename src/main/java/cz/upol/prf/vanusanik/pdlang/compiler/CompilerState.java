@@ -10,9 +10,8 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import cz.upol.prf.vanusanik.pdlang.tools.Pair;
 
 public class CompilerState {
-	
-	private LinkedList<ParserRuleContext> executionStackTree
-		= new LinkedList<ParserRuleContext>();
+
+	private LinkedList<ParserRuleContext> executionStackTree = new LinkedList<ParserRuleContext>();
 
 	public void pushTree(ParserRuleContext syntaxElement) {
 		executionStackTree.push(syntaxElement);
@@ -21,41 +20,40 @@ public class CompilerState {
 	public void popTree(ParserRuleContext syntaxElement) {
 		executionStackTree.pop();
 	}
-	
+
 	private LinkedList<ClassContext> classContext = new LinkedList<ClassContext>();
-	
+
 	public ClassContext pushClassContext() {
 		classContext.add(new ClassContext());
 		return classContext.getLast();
 	}
-	
+
 	public ClassContext getClassContext() {
 		return getClassContext(0);
 	}
-	
+
 	public ClassContext getClassContext(int n) {
 		if (n > classContext.size())
 			return null;
-		return classContext.get(classContext.size()-(1+n));
+		return classContext.get(classContext.size() - (1 + n));
 	}
-	
+
 	public void popClassContext() {
 		classContext.pop();
 	}
-	
-	private HashMap<String, TypeInformation> typeMap = 
-			new HashMap<String, TypeInformation>();
-	
+
+	private HashMap<String, TypeInformation> typeMap = new HashMap<String, TypeInformation>();
+
 	private LinkedList<ResolveContext> resolveContext = new LinkedList<ResolveContext>();
 
 	public void pushResolveContext() {
 		resolveContext.add(new ResolveContext());
 	}
-	
+
 	public void popResolveContext() {
 		resolveContext.pop();
 	}
-	
+
 	public Pair<Integer, TypeInformation> resolveType(String identifier) {
 		List<ResolveContext> reverse = new ArrayList<ResolveContext>(resolveContext);
 		int level = 0;
@@ -67,11 +65,11 @@ public class CompilerState {
 		}
 		return null;
 	}
-	
+
 	public void addType(TypeInformation type, String identifier) {
 		resolveContext.peekLast().addType(type, identifier);
 	}
-	
+
 	private String source;
 
 	public String getSource() {
@@ -89,13 +87,13 @@ public class CompilerState {
 	public void setTypeMap(HashMap<String, TypeInformation> typeMap) {
 		this.typeMap = typeMap;
 	}
-	
+
 	private String packageName;
 
 	public String getPackage() {
 		return packageName;
 	}
-	
+
 	public void setPackage(String packageName) {
 		this.packageName = packageName;
 	}

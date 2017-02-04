@@ -12,8 +12,7 @@ public class ImportsCC implements CompilerComponent<ImportsContext> {
 		return ImportsContext.class;
 	}
 
-	public Object compile(ImportsContext syntaxElement, PDLangCompiler compiler, CompilerState state)
-			throws Exception {
+	public Object compile(ImportsContext syntaxElement, PDLangCompiler compiler, CompilerState state) throws Exception {
 		for (SimpleImportContext si : syntaxElement.simpleImport()) {
 			compiler.next(si, compiler, state);
 		}

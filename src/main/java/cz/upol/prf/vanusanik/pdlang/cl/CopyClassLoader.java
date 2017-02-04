@@ -31,7 +31,8 @@ import java.util.Map;
 import cz.upol.prf.vanusanik.pdlang.tools.Pair;
 
 /**
- * Implements loans from other class loaders 
+ * Implements loans from other class loaders
+ * 
  * @author pvan
  */
 public class CopyClassLoader extends ClassLoader {
@@ -39,23 +40,22 @@ public class CopyClassLoader extends ClassLoader {
 	/**
 	 * Stores loans from other class loaders
 	 */
-	private Map<String, Pair<String, ClassLoader>> loans = 
-			new HashMap<String, Pair<String, ClassLoader>>();
-	
+	private Map<String, Pair<String, ClassLoader>> loans = new HashMap<String, Pair<String, ClassLoader>>();
+
 	public CopyClassLoader(ClassLoader parent) {
 		super(parent);
 	}
 
 	/**
 	 * Adds loaned class as sysname
+	 * 
 	 * @param sysname
 	 * @param classDef
 	 */
 	protected void addLoan(String sysname, Class<?> classDef) {
-		loans.put(sysname, Pair.makePair(classDef.getName(), 
-				classDef.getClassLoader()));
+		loans.put(sysname, Pair.makePair(classDef.getName(), classDef.getClassLoader()));
 	}
-	
+
 	/**
 	 * @param sysname
 	 * @return if sysname is loaned or not
@@ -63,9 +63,10 @@ public class CopyClassLoader extends ClassLoader {
 	protected boolean isLoan(String sysname) {
 		return loans.containsKey(sysname);
 	}
-	
+
 	/**
 	 * Returns loaned class
+	 * 
 	 * @param sysname
 	 * @return
 	 * @throws ClassNotFoundException
@@ -75,5 +76,5 @@ public class CopyClassLoader extends ClassLoader {
 			throw new ClassNotFoundException("not a loan");
 		return loans.get(sysname).getSecond().loadClass(loans.get(sysname).getFirst());
 	}
-	
+
 }

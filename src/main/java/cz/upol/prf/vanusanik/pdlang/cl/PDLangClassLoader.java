@@ -37,29 +37,28 @@ import cz.upol.prf.vanusanik.pdlang.path.PDPathDescriptor;
 import cz.upol.prf.vanusanik.pdlang.tools.Constants;
 
 public class PDLangClassLoader extends CopyClassLoader {
-	
+
 	private PDLang context;
 	private PDLangCompiler compiler;
 	private InvokerCompiler invCompiler = new InvokerCompiler();
 	private boolean debug;
-	
+
 	public PDLangClassLoader(ClassLoader parent, PDLang context) {
 		super(parent);
 		this.context = context;
 		this.compiler = new PDLangCompilerBean(this.context);
 	}
-	
+
 	public void addBuildPath(File bp) {
 		compiler.registerPDPath(bp);
 	}
-	
+
 	public void addBuildPath(PDPathDescriptor pd) {
 		compiler.registerPDPath(pd);
 	}
 
 	@Override
-	protected Class<?> findClass(String clsName) 
-			throws ClassNotFoundException {
+	protected Class<?> findClass(String clsName) throws ClassNotFoundException {
 		if (clsName.startsWith(Constants.PD_CLASSTYPE)) {
 			return getPDLangObject(clsName.substring(3));
 		}
@@ -78,9 +77,8 @@ public class PDLangClassLoader extends CopyClassLoader {
 			throw new ClassNotFoundException("Failed to load class " + className, e);
 		}
 	}
-	
-	private Map<String, Class<?>> classCache
-		= new HashMap<String, Class<?>>();
+
+	private Map<String, Class<?>> classCache = new HashMap<String, Class<?>>();
 
 	private Class<?> getPDLangDefinition(String className) throws Exception {
 		if (!classCache.containsKey(className)) {
@@ -88,15 +86,14 @@ public class PDLangClassLoader extends CopyClassLoader {
 		}
 		return classCache.get(className);
 	}
-	
-	private Map<String, Class<?>> invokerCache = 
-			new HashMap<String, Class<?>>();
+
+	private Map<String, Class<?>> invokerCache = new HashMap<String, Class<?>>();
 
 	private Class<?> getInvoker(String invoker) throws ClassNotFoundException {
 		if (!invokerCache.containsKey(invoker)) {
 			byte[] classData = invCompiler.compileInvoker(this, invoker);
-			invokerCache.put(invoker, defineClass(Constants.PD_CLASSTYPE_INVOKER + invoker, 
-					classData, 0, classData.length));
+			invokerCache.put(invoker,
+					defineClass(Constants.PD_CLASSTYPE_INVOKER + invoker, classData, 0, classData.length));
 		}
 		return invokerCache.get(invoker);
 	}
@@ -108,5 +105,5 @@ public class PDLangClassLoader extends CopyClassLoader {
 	public void setDebug(boolean debug) {
 		this.debug = debug;
 	}
-	
+
 }

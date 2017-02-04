@@ -16,21 +16,21 @@ public class SimpleImportCC implements CompilerComponent<SimpleImportContext> {
 
 	public Object compile(SimpleImportContext syntaxElement, PDLangCompiler compiler, CompilerState state)
 			throws Exception {
-		
-		String moduleName = (String)compiler.next(syntaxElement.moduleName(), compiler, state);
+
+		String moduleName = (String) compiler.next(syntaxElement.moduleName(), compiler, state);
 		String javaClassName = CompilerUtils.asJavaName(moduleName);
-		
+
 		TypeInformation ti = new TypeInformation();
-		
+
 		ti.setJavaClassName(javaClassName);
 		ti.setPdlangType(moduleName);
 		ti.setPackageName(CompilerUtils.removeLastDot(moduleName));
 		ti.setJavaTypeName("L" + javaClassName + ";");
 		ti.setType(Type.MODULE);
 		ti.setCarryData(syntaxElement.moduleInitExpression());
-		
+
 		state.getTypeMap().put(CompilerUtils.moduleName(moduleName), ti);
-		
+
 		return ti;
 	}
 

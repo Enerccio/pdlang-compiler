@@ -30,30 +30,31 @@ import java.util.Map;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
-import cz.upol.prf.vanusanik.pdlang.cl.ModuleDiscoveryManager;
 import cz.upol.prf.vanusanik.pdlang.cl.PDLangClassLoader;
 import cz.upol.prf.vanusanik.pdlang.path.PDPathDescriptor;
 
 public interface PDLangCompiler {
-	
+
 	/**
 	 * Registers path descriptor and appends it to the available paths
+	 * 
 	 * @param descriptor
 	 */
 	public void registerPDPath(PDPathDescriptor descriptor);
-	
+
 	/**
-	 * Registers path as path descriptor. Equivalent of calling 
+	 * Registers path as path descriptor. Equivalent of calling
 	 * registerPDPath(new FileSystemPDPathDescriptor(systemPath))
+	 * 
 	 * @param systemPath
 	 */
 	public void registerPDPath(File systemPath);
-	
-	public <T extends ParserRuleContext> Object 
-			next(T syntaxElement, PDLangCompiler compiler, CompilerState state) throws Exception;
 
-	public Class<?> compile(String className, Map<String, 
-			Class<?>> classCache, PDLangClassLoader classLoader) throws Exception;
+	public <T extends ParserRuleContext> Object next(T syntaxElement, PDLangCompiler compiler, CompilerState state)
+			throws Exception;
+
+	public Class<?> compile(String className, Map<String, Class<?>> classCache, PDLangClassLoader classLoader)
+			throws Exception;
 
 	ModuleDiscoveryManager getDiscoveryManager();
 

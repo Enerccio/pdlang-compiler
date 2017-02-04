@@ -3,5 +3,9 @@
 module std() {
 
 	foreign type System;
+	
+	foreign function systemInstance() rets System;
+	
+	foreign function nodeCurrentTime(system : System) rets System;  
 
 }

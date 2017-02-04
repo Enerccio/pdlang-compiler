@@ -13,7 +13,7 @@ public class CompilerUtils {
 	public static String removeLastSlashedElement(String className) {
 		String[] elements = className.split(Pattern.quote("/"));
 		ArrayList<String> els = new ArrayList<String>(Arrays.asList(elements));
-		els.remove(els.size()-1);
+		els.remove(els.size() - 1);
 		return StringUtils.join(els, "/");
 	}
 
@@ -37,7 +37,7 @@ public class CompilerUtils {
 	public static String moduleName(String moduleName) {
 		if (!moduleName.contains("."))
 			return moduleName;
-		return moduleName.substring(moduleName.lastIndexOf(".")+1);
+		return moduleName.substring(moduleName.lastIndexOf(".") + 1);
 	}
 
 }

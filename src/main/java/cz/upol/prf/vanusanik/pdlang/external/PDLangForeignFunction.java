@@ -6,5 +6,5 @@ import cz.upol.prf.vanusanik.pdlang.tools.Stateless;
 public interface PDLangForeignFunction extends PDLangExternalElement {
 
 	public Object invoke(CurrentCallContext ctx);
-	
+
 }

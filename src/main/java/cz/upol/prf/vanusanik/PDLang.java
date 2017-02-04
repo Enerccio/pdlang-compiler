@@ -14,16 +14,16 @@ import cz.upol.prf.vanusanik.pdlang.path.InternalPDPathDescriptor;
 import cz.upol.prf.vanusanik.pdlang.tools.Utils;
 
 public class PDLang {
-	
+
 	public static PDLang getHandle() {
 		return new PDLang();
 	}
 
 	private Map<String, PDLangExternalElement> bindings = new HashMap<String, PDLangExternalElement>();
-	private List<PDLangLibWrapper> wrappers = Arrays.asList((PDLangLibWrapper)new StdlibLoader());
-	
+	private List<PDLangLibWrapper> wrappers = Arrays.asList((PDLangLibWrapper) new StdlibLoader());
+
 	private PDLangClassLoader classLoader;
-	
+
 	public void init(ClassLoader parentClassLoader) {
 		classLoader = new PDLangClassLoader(parentClassLoader, this);
 		for (PDLangLibWrapper wrapper : wrappers) {
@@ -31,13 +31,13 @@ public class PDLang {
 		}
 		classLoader.addBuildPath(new InternalPDPathDescriptor(StdlibLoader.class));
 	}
-	
+
 	public ExternalModuleHolder getModule(String name) throws ClassNotFoundException {
 		return new ModuleHolder(classLoader.loadClass(asModuleName(name)));
 	}
-	
+
 	private String asModuleName(String name) {
-		return "~pd"+Utils.dots2slashes(name);
+		return "~pd" + Utils.dots2slashes(name);
 	}
 
 	public void setForeignBinding(String ppath, PDLangExternalElement e) {
@@ -46,5 +46,9 @@ public class PDLang {
 
 	public PDLangClassLoader getClassLoader() {
 		return classLoader;
+	}
+
+	public PDLangExternalElement getForeignBinding(String typePath) {
+		return bindings.get(typePath);
 	}
 }
