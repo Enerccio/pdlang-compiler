@@ -1,15 +1,18 @@
 package cz.upol.prf.vanusanik.pdlang.compiler;
 
+import cz.upol.prf.vanusanik.pdlang.core.components.exceptions.CompilationException;
+
 public class TypeInformation {
 
 	public static enum Type {
-		BASIC, INVOKER, MODULE, CUSTOM
+		BASIC, FUNCTION, MODULE, CUSTOM, FOREIGN
 	}
 
 	private String javaClassName;
 	private String javaTypeName;
 	private String packageName;
 	private String pdlangType;
+	private String invokerType;
 	private Type type;
 	private Object carryData;
 
@@ -59,5 +62,17 @@ public class TypeInformation {
 
 	public Object getCarryData() {
 		return this.carryData;
+	}
+	
+	public String invokerType() {
+		if (type == Type.FUNCTION) {
+			return invokerType;
+		} else {
+			throw new CompilationException("Not an invoker type");
+		}
+	}
+	
+	public void setInvokerType(String invokerType) {
+		this.invokerType = invokerType;
 	}
 }
