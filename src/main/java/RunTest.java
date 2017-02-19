@@ -20,7 +20,7 @@ public class RunTest {
 
 		ExternalModuleHolder h = ctx.getModule("std.std");
 
-		// c.loadClass("~pdtest/test_module");;
+		// c.loadClass("~pdtest/test_module");
 	}
 
 }

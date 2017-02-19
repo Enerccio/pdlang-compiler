@@ -9,6 +9,9 @@ public class StdlibLoader implements PDLangLibWrapper {
 
 	public void addBindings(PDLang context) {
 		context.setForeignBinding("std.std.System", new PDExternalTypeHolder<std.System>(std.System.class));
+		
+		context.setForeignBinding("std.std.systemInstance", new std.SystemInstanceMethod());
+		context.setForeignBinding("std.std.nodeCurrentTimeMS", new std.NodeCurrentTimeMS());
 	}
 
 }

@@ -6,6 +6,6 @@ module std() {
 	
 	foreign function systemInstance() rets System;
 	
-	foreign function nodeCurrentTime(system : System) rets System;  
+	foreign function nodeCurrentTimeMS(system : System) rets lng;  
 
 }

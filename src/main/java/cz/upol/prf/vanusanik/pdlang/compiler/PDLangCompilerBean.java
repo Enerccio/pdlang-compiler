@@ -80,7 +80,7 @@ public class PDLangCompilerBean implements PDLangCompiler {
 				return ((CompilerComponent<ParserRuleContext>) commands.get(syntaxElement.getClass()))
 						.compile(syntaxElement, compiler, state);
 			}
-			throw new RuntimeException("Missing compiler component for " + syntaxElement.getClass().getSimpleName());
+			throw new CompilationException("Missing compiler component for " + syntaxElement.getClass().getSimpleName());
 		} finally {
 			state.popTree(syntaxElement);
 		}
