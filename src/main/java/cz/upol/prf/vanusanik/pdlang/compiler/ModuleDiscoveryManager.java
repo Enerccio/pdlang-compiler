@@ -21,6 +21,7 @@ import cz.upol.inf.vanusanik.pdlang.parser.pdlangParser.ConstTypeContext;
 import cz.upol.inf.vanusanik.pdlang.parser.pdlangParser.ForeignMethodContext;
 import cz.upol.inf.vanusanik.pdlang.parser.pdlangParser.ForeignTypeContext;
 import cz.upol.inf.vanusanik.pdlang.parser.pdlangParser.ModuleDefinitionContext;
+import cz.upol.inf.vanusanik.pdlang.parser.pdlangParser.ModuleFuncContext;
 import cz.upol.inf.vanusanik.pdlang.parser.pdlangParser.SimpleImportContext;
 import cz.upol.inf.vanusanik.pdlang.parser.pdlangParser.TypeContext;
 import cz.upol.prf.vanusanik.PDLang;
@@ -200,6 +201,51 @@ public class ModuleDiscoveryManager {
 						setPathElement(typePath, h);
 						
 						return super.visitForeignType(ctx);
+					}					
+
+					@Override
+					public Void visitModuleFunc(ModuleFuncContext ctx) {						
+						String identifier = ctx.identifier().getText();
+						String typePath = modPath + "." + identifier;
+						
+						String genname = Constants.PD_CLASSTYPE + Utils.dots2slashes(modPath) + Constants.PD_SEPARATOR + identifier + "Func";
+						
+						TypeInformation ti = new TypeInformation();
+						ti.setType(Type.FUNCTION);
+						ti.setJavaClassName(genname);
+						ti.setJavaTypeName("L"+ genname + ";");
+						
+						List<TypeProxy> pList = new ArrayList<TypeProxy>();
+						if (ctx.closure().closureRet() != null)
+							pList.addAll(findTypes(Arrays.asList(ctx.closure().closureRet().type())));
+						else {
+							TypeInformation ti2 = new TypeInformation();
+							ti.setType(Type.BASIC_OBJECT);
+							ti.setJavaClassName(Object.class.getName());
+							ti.setJavaTypeName("L" + Utils.dots2slashes(Object.class.getName()) + ";");
+							TypeProxy tp = new TypeProxy(null);
+							tp.setType(ti2);
+							pList.add(tp);
+						}
+							
+						if (ctx.closure().closureParams() != null && ctx.closure().closureParams().closureFormalParams() != null) {
+							ClosureFormalParamsContext fpctx = ctx.closure().closureParams().closureFormalParams();
+							for (ClosureParamContext pctx : fpctx.closureParam()) {
+								pList.addAll(findTypes(Arrays.asList(pctx.type())));
+							}
+						}
+						ti.setCarryData(pList);
+						invokers.add(ti);
+						
+						TypeTypeContainer tc = new TypeTypeContainer();
+						tc.setProxy(new TypeProxy(typePath));
+						tc.getProxy().setType(ti);
+						
+						TypeInfoHolder h = new TypeInfoHolder(TreeType.FUNCTION, tc);
+						
+						setPathElement(typePath, h);
+						
+						return super.visitModuleFunc(ctx);
 					}
 
 					@Override

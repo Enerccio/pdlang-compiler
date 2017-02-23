@@ -72,7 +72,8 @@ public class PDLangClassLoader extends CopyClassLoader {
 			return getInvoker(className.substring(4));
 		}
 		try {
-			return getPDLangDefinition(className);
+			String[] basePath = className.split(Constants.PD_SEPARATOR);
+			return getPDLangDefinition(className, basePath[0]);
 		} catch (Exception e) {
 			throw new ClassNotFoundException("Failed to load class " + className, e);
 		}
@@ -80,9 +81,9 @@ public class PDLangClassLoader extends CopyClassLoader {
 
 	private Map<String, Class<?>> classCache = new HashMap<String, Class<?>>();
 
-	private Class<?> getPDLangDefinition(String className) throws Exception {
-		if (!classCache.containsKey(className)) {
-			classCache.put(className, compiler.compile(className, classCache, this));
+	private Class<?> getPDLangDefinition(String className, String baseClass) throws Exception {
+		if (!classCache.containsKey(baseClass)) {
+			classCache.put(baseClass, compiler.compile(baseClass, classCache, this));
 		}
 		return classCache.get(className);
 	}

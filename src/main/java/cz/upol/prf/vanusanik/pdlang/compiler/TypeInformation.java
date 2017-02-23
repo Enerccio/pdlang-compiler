@@ -5,7 +5,7 @@ import cz.upol.prf.vanusanik.pdlang.core.components.exceptions.CompilationExcept
 public class TypeInformation {
 
 	public static enum Type {
-		BASIC, BASIC_OBJECT, FUNCTION, MODULE, CUSTOM, FOREIGN, FOREIGN_FUNC
+		BASIC, BASIC_OBJECT, FUNCTION, STATIC_FUNCTION, MODULE, CUSTOM, FOREIGN, FOREIGN_FUNC
 	}
 
 	private String javaClassName;
@@ -65,7 +65,7 @@ public class TypeInformation {
 	}
 	
 	public String invokerType() {
-		if (type == Type.FUNCTION || type == Type.FOREIGN_FUNC) {
+		if (type == Type.FUNCTION || type == Type.FOREIGN_FUNC || type == Type.STATIC_FUNCTION) {
 			return invokerType;
 		} else {
 			throw new CompilationException("Not an invoker type");
