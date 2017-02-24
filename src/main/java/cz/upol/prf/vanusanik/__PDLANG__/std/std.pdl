@@ -11,5 +11,9 @@ module std() {
 	static emptyAction() {
 	
 	}
+	
+	emptyAction2() {
+	
+	}
 
 }

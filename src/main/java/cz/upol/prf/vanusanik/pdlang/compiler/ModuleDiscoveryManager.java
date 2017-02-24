@@ -34,12 +34,30 @@ import cz.upol.prf.vanusanik.pdlang.path.PDPathDescriptor;
 import cz.upol.prf.vanusanik.pdlang.tools.Constants;
 import cz.upol.prf.vanusanik.pdlang.tools.Utils;
 
+/**
+ * ModuleDiscoveryManager
+ * 
+ * Scans the path for all pdlang files and builds 
+ * type information for the rest of the compilation
+ * 
+ * @author pvan
+ */
 public class ModuleDiscoveryManager {
 	
+	/**
+	 * Tree type information enumerator
+	 * @author pvan
+	 *
+	 */
 	public static enum TreeType {
 		UNUSED, MODULE, TYPE, FUNCTION
 	}
 	
+	/**
+	 * Stores type proxy in tree
+	 * @author pvan
+	 *
+	 */
 	private static abstract class TypeContainer {
 		private TypeProxy proxy;
 
@@ -60,10 +78,16 @@ public class ModuleDiscoveryManager {
 		
 	}
 
+	/**
+	 * Tree structure holding types via dotted path
+	 */
 	public static class TypeInfoHolder {
+		/** Subtype map */
 		private Map<String, TypeInfoHolder> subtypes = new HashMap<String, TypeInfoHolder>();
 		
+		/** Type type*/
 		private final TreeType t;
+		/** Actual type */
 		private final TypeContainer type;
 		
 		public TypeInfoHolder(TreeType t, TypeContainer type) {
@@ -86,10 +110,18 @@ public class ModuleDiscoveryManager {
 		}		
 	}
 
+	/** Roots */
 	private Map<String, TypeInfoHolder> types = new HashMap<String, TypeInfoHolder>();
+	/** List of unresolved types that gets scanned after each package scan */
 	private List<TypeProxy> unresolvedTypes = new ArrayList<TypeProxy>();
+	/** List of non-created invokers */
 	private List<TypeInformation> invokers = new ArrayList<TypeInformation>();
 	
+	/**
+	 * Sets the package.type.subtype path for that holder
+	 * @param path
+	 * @param holder
+	 */
 	private void setPathElement(String path, TypeInfoHolder holder) {
 		String[] elements = path.split(Pattern.quote("."));
 		Map<String, TypeInfoHolder> lookup = types;
@@ -106,6 +138,11 @@ public class ModuleDiscoveryManager {
 		}		
  	}
 	
+	/**
+	 * Returns path element for package
+	 * @param path
+	 * @return
+	 */
 	private TypeInformation getPathElement(String path) {
 		String[] elements = path.split(Pattern.quote("."));
 		Map<String, TypeInfoHolder> lookup = types;
@@ -129,7 +166,21 @@ public class ModuleDiscoveryManager {
 		}	
 		return null;
 	}
+	
+	/**
+	 * Returns type information for path or null if no such type exists
+	 * @param path
+	 * @return
+	 */
+	public TypeInformation getType(String path) {
+		return getPathElement(path);
+	}
 
+	/**
+	 * Scans the path descriptor for types
+	 * @param descriptor
+	 * @param context
+	 */
 	@SuppressWarnings("unchecked")
 	public void scan(final PDPathDescriptor descriptor, final PDLang context) {
 
@@ -151,6 +202,8 @@ public class ModuleDiscoveryManager {
 					
 					@Override
 					public Void visitSimpleImport(SimpleImportContext ctx) {
+						// Resolves imports
+						
 						String moduleName = ctx.moduleName().getText();
 						String[] pathComponents = module.split(Pattern.quote("."));
 						String modName = pathComponents[pathComponents.length-1];
@@ -160,6 +213,8 @@ public class ModuleDiscoveryManager {
 
 					@Override
 					public Void visitModuleDefinition(ModuleDefinitionContext ctx) {
+						// Stores the module as type into package path
+						
 						TypeInformation ti = new TypeInformation();
 						ti.setType(Type.MODULE);
 						ti.setJavaTypeName(Constants.PD_CLASSTYPE + Utils.dots2slashes(modPath));
@@ -177,6 +232,8 @@ public class ModuleDiscoveryManager {
 
 					@Override
 					public Void visitForeignType(ForeignTypeContext ctx) {
+						// Stores foreign type into package path
+						
 						String identifier = ctx.identifier().getText();
 						String typePath = modPath + "." + identifier;
 						
@@ -205,24 +262,37 @@ public class ModuleDiscoveryManager {
 
 					@Override
 					public Void visitModuleFunc(ModuleFuncContext ctx) {						
+						// Stores module defined function into type path
+						
 						String identifier = ctx.identifier().getText();
 						String typePath = modPath + "." + identifier;
 						
-						String genname = Constants.PD_CLASSTYPE + Utils.dots2slashes(modPath) + Constants.PD_SEPARATOR + identifier + "Func";
-						
 						TypeInformation ti = new TypeInformation();
-						ti.setType(Type.FUNCTION);
-						ti.setJavaClassName(genname);
-						ti.setJavaTypeName("L"+ genname + ";");
 						
+						if (ctx.staticFunc() != null) {
+							// Static function class type 
+							// Static function does not have class type, since it is a static method on 
+							//  module and can't be passed as invokers etc
+							ti.setType(Type.STATIC_FUNCTION);
+						} else {
+							// Function class type
+							String genname = Constants.PD_CLASSTYPE + Utils.dots2slashes(modPath) + Constants.PD_SEPARATOR + identifier + "Func";
+							
+							ti.setType(Type.FUNCTION);
+							ti.setJavaClassName(genname);
+							ti.setJavaTypeName("L"+ genname + ";");
+						}
+						
+						// List of argument types+return type, return is first in this list
 						List<TypeProxy> pList = new ArrayList<TypeProxy>();
 						if (ctx.closure().closureRet() != null)
 							pList.addAll(findTypes(Arrays.asList(ctx.closure().closureRet().type())));
 						else {
+							// no return means Object
 							TypeInformation ti2 = new TypeInformation();
-							ti.setType(Type.BASIC_OBJECT);
-							ti.setJavaClassName(Object.class.getName());
-							ti.setJavaTypeName("L" + Utils.dots2slashes(Object.class.getName()) + ";");
+							ti2.setType(Type.BASIC_OBJECT);
+							ti2.setJavaClassName(Object.class.getName());
+							ti2.setJavaTypeName("L" + Utils.dots2slashes(Object.class.getName()) + ";");
 							TypeProxy tp = new TypeProxy(null);
 							tp.setType(ti2);
 							pList.add(tp);
@@ -235,7 +305,11 @@ public class ModuleDiscoveryManager {
 							}
 						}
 						ti.setCarryData(pList);
-						invokers.add(ti);
+						
+						if (ctx.staticFunc() == null) {
+							// static functions can't have invokers
+							invokers.add(ti);
+						}
 						
 						TypeTypeContainer tc = new TypeTypeContainer();
 						tc.setProxy(new TypeProxy(typePath));
@@ -250,6 +324,8 @@ public class ModuleDiscoveryManager {
 
 					@Override
 					public Void visitForeignMethod(ForeignMethodContext ctx) {
+						// Foreign function, always static
+						
 						String identifier = ctx.identifier().getText();
 						String typePath = modPath + "." + identifier;
 						
@@ -270,9 +346,9 @@ public class ModuleDiscoveryManager {
 							pList.addAll(findTypes(Arrays.asList(ctx.closureRet().type())));
 						else {
 							TypeInformation ti2 = new TypeInformation();
-							ti.setType(Type.BASIC_OBJECT);
-							ti.setJavaClassName(Object.class.getName());
-							ti.setJavaTypeName("L" + Utils.dots2slashes(Object.class.getName()) + ";");
+							ti2.setType(Type.BASIC_OBJECT);
+							ti2.setJavaClassName(Object.class.getName());
+							ti2.setJavaTypeName("L" + Utils.dots2slashes(Object.class.getName()) + ";");
 							TypeProxy tp = new TypeProxy(null);
 							tp.setType(ti2);
 							pList.add(tp);
@@ -285,7 +361,6 @@ public class ModuleDiscoveryManager {
 							}
 						}
 						ti.setCarryData(pList);
-						invokers.add(ti);
 						
 						TypeTypeContainer tc = new TypeTypeContainer();
 						tc.setProxy(new TypeProxy(typePath));
@@ -299,6 +374,8 @@ public class ModuleDiscoveryManager {
 					}
 
 					private List<TypeProxy> findTypes(List<TypeContext> types) {
+						// Converts TypeContext into TypeProxy
+						
 						List<TypeProxy> pList = new ArrayList<TypeProxy>();
 						
 						outer:
@@ -507,12 +584,14 @@ public class ModuleDiscoveryManager {
 				visitor.visit(parser.compilationUnit());
 			}
 			
+			// Resolve unresolved proxies
 			for (TypeProxy proxy : unresolvedTypes) {
 				if (!proxy.isResolved()) {
 					proxy.setType(getPathElement(proxy.getExpectedPath()));
 				}
 			}
 			
+			// create invoker type names for invokers
 			outer:
 			for (TypeInformation invoker : invokers) {
 				if (invoker.invokerType() == null) {
