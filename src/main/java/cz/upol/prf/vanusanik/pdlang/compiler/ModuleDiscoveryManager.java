@@ -22,7 +22,10 @@ import cz.upol.inf.vanusanik.pdlang.parser.pdlangParser.ForeignMethodContext;
 import cz.upol.inf.vanusanik.pdlang.parser.pdlangParser.ForeignTypeContext;
 import cz.upol.inf.vanusanik.pdlang.parser.pdlangParser.ModuleDefinitionContext;
 import cz.upol.inf.vanusanik.pdlang.parser.pdlangParser.ModuleFuncContext;
+import cz.upol.inf.vanusanik.pdlang.parser.pdlangParser.ModuleStructContext;
 import cz.upol.inf.vanusanik.pdlang.parser.pdlangParser.SimpleImportContext;
+import cz.upol.inf.vanusanik.pdlang.parser.pdlangParser.StructBodyContext;
+import cz.upol.inf.vanusanik.pdlang.parser.pdlangParser.StructDeclContext;
 import cz.upol.inf.vanusanik.pdlang.parser.pdlangParser.TypeContext;
 import cz.upol.prf.vanusanik.PDLang;
 import cz.upol.prf.vanusanik.pdlang.compiler.TypeInformation.Type;
@@ -218,6 +221,7 @@ public class ModuleDiscoveryManager {
 						TypeInformation ti = new TypeInformation();
 						ti.setType(Type.MODULE);
 						ti.setJavaTypeName(Constants.PD_CLASSTYPE + Utils.dots2slashes(modPath));
+						ti.setPackageName(modPath);
 						
 						TypeTypeContainer tc = new TypeTypeContainer();
 						tc.setProxy(new TypeProxy(modPath));
@@ -248,6 +252,7 @@ public class ModuleDiscoveryManager {
 						ti.setType(Type.FOREIGN);
 						ti.setJavaClassName(extType.getType().getName());
 						ti.setJavaTypeName("L"+ Utils.dots2slashes(extType.getType().getName()) + ";");
+						ti.setPackageName(typePath);
 						
 						TypeTypeContainer tc = new TypeTypeContainer();
 						tc.setProxy(new TypeProxy(typePath));
@@ -258,7 +263,47 @@ public class ModuleDiscoveryManager {
 						setPathElement(typePath, h);
 						
 						return super.visitForeignType(ctx);
-					}					
+					}	
+					
+					
+
+					@Override
+					public Void visitModuleStruct(ModuleStructContext ctx) {
+						// Stores type definition
+						
+						String identifier = ctx.identifier().getText();
+						String typePath = modPath + "." + identifier;
+						
+						TypeInformation ti = new TypeInformation();
+						String genname = Constants.PD_CLASSTYPE + Utils.dots2slashes(modPath) + Constants.PD_SEPARATOR + identifier + "Struct";
+						
+						ti.setType(Type.CUSTOM);
+						ti.setJavaClassName(genname);
+						ti.setJavaTypeName("L"+ genname + ";");
+						ti.setPackageName(typePath);
+						ti.setPdlangType(identifier);
+						
+						Map<String, TypeProxy> fields = new HashMap<String, TypeProxy>();
+						
+						StructBodyContext body = ctx.structBody();
+						for (StructDeclContext s : body.structDecl()) {
+							String fname = s.identifier().getText();
+							TypeProxy fproxy = findTypes(Arrays.asList(s.type())).iterator().next();
+							fields.put(fname, fproxy);
+						}
+						
+						ti.setCarryData(fields);
+						
+						TypeTypeContainer tc = new TypeTypeContainer();
+						tc.setProxy(new TypeProxy(typePath));
+						tc.getProxy().setType(ti);
+						
+						TypeInfoHolder h = new TypeInfoHolder(TreeType.TYPE, tc);
+						
+						setPathElement(typePath, h);
+						
+						return super.visitModuleStruct(ctx);
+					}
 
 					@Override
 					public Void visitModuleFunc(ModuleFuncContext ctx) {						
@@ -305,6 +350,7 @@ public class ModuleDiscoveryManager {
 							}
 						}
 						ti.setCarryData(pList);
+						ti.setPackageName(typePath);
 						
 						if (ctx.staticFunc() == null) {
 							// static functions can't have invokers
@@ -361,6 +407,7 @@ public class ModuleDiscoveryManager {
 							}
 						}
 						ti.setCarryData(pList);
+						ti.setPackageName(typePath);
 						
 						TypeTypeContainer tc = new TypeTypeContainer();
 						tc.setProxy(new TypeProxy(typePath));

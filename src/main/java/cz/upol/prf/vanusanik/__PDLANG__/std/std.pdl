@@ -15,5 +15,10 @@ module std() {
 	emptyAction2() {
 	
 	}
+	
+	structure TestStruct {
+		lng    : field1;
+		System : sysIns;
+	}
 
 }
