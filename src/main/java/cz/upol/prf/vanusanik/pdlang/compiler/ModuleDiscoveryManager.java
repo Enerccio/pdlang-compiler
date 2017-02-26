@@ -716,6 +716,7 @@ public class ModuleDiscoveryManager {
 			} else {
 				TypeInformation ti = proxy.getType();
 				switch (ti.getType()) {
+				case BASIC_OBJECT:
 				case BASIC:
 					if ("Byt".equals(ti.getPackageName())) {
 						invoker += InvokerCompiler.OBJ_TYPE_BYTE;
@@ -744,8 +745,7 @@ public class ModuleDiscoveryManager {
 					if ("Chr".equals(ti.getPackageName())) {
 						invoker += InvokerCompiler.OBJ_TYPE_CHAR;
 					}
-					break;
-				case BASIC_OBJECT:
+					
 					if ("byt".equals(ti.getPackageName())) {
 						invoker += InvokerCompiler.BASIC_TYPE_BYTE;
 					}
@@ -784,9 +784,9 @@ public class ModuleDiscoveryManager {
 					break;
 				case CUSTOM:
 				case MODULE:
+				case FOREIGN:
 					invoker += InvokerCompiler.OBJ_TYPE_ANY;
 					break;
-				case FOREIGN:
 				case FOREIGN_FUNC:
 				case FUNCTION:
 				case STATIC_FUNCTION:

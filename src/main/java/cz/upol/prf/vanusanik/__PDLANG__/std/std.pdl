@@ -6,15 +6,19 @@ module std() {
 	
 	foreign function systemInstance() rets System;
 	
-	foreign function nodeCurrentTimeMS(system : System) rets lng;  
+	foreign function nodeCurrentTimeMS(system: System) rets lng;  
 	
 	static emptyAction() {
 	
 	}
 	
-	emptyAction2() {
+	emptyAction2({str:(any,int)}: runnable) {
 	
 	} rets TestStruct;
+	
+	test2(Lng: a1, System: x) {
+	
+	} rets bol;
 	
 	structure TestStruct {
 		lng    : field1;
