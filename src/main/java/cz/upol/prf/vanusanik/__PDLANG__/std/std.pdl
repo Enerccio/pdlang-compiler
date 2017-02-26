@@ -14,7 +14,7 @@ module std() {
 	
 	emptyAction2() {
 	
-	}
+	} rets TestStruct;
 	
 	structure TestStruct {
 		lng    : field1;

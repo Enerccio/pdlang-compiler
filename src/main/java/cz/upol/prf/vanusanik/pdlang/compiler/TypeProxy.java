@@ -24,5 +24,9 @@ public class TypeProxy {
 	public void setType(TypeInformation type) {
 		this.type = type;
 	}
+
+	public boolean isInvokerType() {
+		return type != null && type.isInvokerType();
+	}
 	
 }

@@ -65,7 +65,7 @@ public class TypeInformation {
 	}
 	
 	public String invokerType() {
-		if (type == Type.FUNCTION || type == Type.FOREIGN_FUNC ) {
+		if (isInvokerType()) {
 			return invokerType;
 		} else {
 			throw new CompilationException("Not an invoker type");
@@ -74,5 +74,9 @@ public class TypeInformation {
 	
 	public void setInvokerType(String invokerType) {
 		this.invokerType = invokerType;
+	}
+
+	public boolean isInvokerType() {
+		return type == Type.FUNCTION || type == Type.FOREIGN_FUNC;
 	}
 }

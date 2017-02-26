@@ -14,26 +14,50 @@ import cz.upol.prf.vanusanik.pdlang.tools.Utils;
 
 public class InvokerCompiler implements Opcodes {
 
+	public static final char OBJ_TYPE_ANY = 'a';
+	public static final char OBJ_TYPE_BOOL = 'B';
+	public static final char OBJ_TYPE_BYTE = 'X';
+	public static final char OBJ_TYPE_CHAR = 'C';
+	public static final char OBJ_TYPE_LONG = 'L';
+	public static final char OBJ_TYPE_DOUBLE = 'D';
+	public static final char OBJ_TYPE_FLOAT = 'F';
+	public static final char OBJ_TYPE_INT = 'I';
+	public static final char BASIC_TYPE_BOOL = 'b';
+	public static final char BASIC_TYPE_BYTE = 'x';
+	public static final char BASIC_TYPE_CHAR = 'c';
+	public static final char BASIC_TYPE_LONG = 'l';
+	public static final char BASIC_TYPE_DOUBLE = 'd';
+	public static final char BASIC_TYPE_FLOAT = 'f';
+	public static final char BASIC_TYPE_INT = 'i';
+	public static final char BASIC_TYPE_STR = 's';
+	
+	public static final char INV_SEP_RIGHT = '⟫';
+	public static final char INV_SEP_LEFT = '⟪';
+	
 	private Map<Character, String> type2jtype = new HashMap<Character, String>();
 
 	public InvokerCompiler() {
 		type2jtype.put('(', null);
 		type2jtype.put('T', null);
 
-		type2jtype.put('i', "I");
-		type2jtype.put('f', "F");
-		type2jtype.put('d', "D");
-		type2jtype.put('l', "J");
-		type2jtype.put('c', "C");
-		type2jtype.put('b', "Z");
+		type2jtype.put(BASIC_TYPE_INT, "I");
+		type2jtype.put(BASIC_TYPE_FLOAT, "F");
+		type2jtype.put(BASIC_TYPE_DOUBLE, "D");
+		type2jtype.put(BASIC_TYPE_LONG, "J");
+		type2jtype.put(BASIC_TYPE_CHAR, "C");
+		type2jtype.put(BASIC_TYPE_BOOL, "Z");
+		type2jtype.put(BASIC_TYPE_BYTE, "B");
 
-		type2jtype.put('I', "Ljava/lang/Integer;");
-		type2jtype.put('F', "Ljava/lang/Float;");
-		type2jtype.put('D', "Ljava/lang/Double;");
-		type2jtype.put('L', "Ljava/lang/Long;");
-		type2jtype.put('C', "Ljava/lang/Char;");
-		type2jtype.put('B', "Ljava/lang/Boolean;");
-		type2jtype.put('a', "Ljava/lang/Object;");
+		type2jtype.put(OBJ_TYPE_INT, "Ljava/lang/Integer;");
+		type2jtype.put(OBJ_TYPE_FLOAT, "Ljava/lang/Float;");
+		type2jtype.put(OBJ_TYPE_DOUBLE, "Ljava/lang/Double;");
+		type2jtype.put(OBJ_TYPE_LONG, "Ljava/lang/Long;");
+		type2jtype.put(OBJ_TYPE_CHAR, "Ljava/lang/Char;");
+		type2jtype.put(OBJ_TYPE_BOOL, "Ljava/lang/Boolean;");
+		type2jtype.put(OBJ_TYPE_BYTE, "Ljava/lang/Byte;");
+		type2jtype.put(OBJ_TYPE_ANY, "Ljava/lang/Object;");
+		
+		type2jtype.put(BASIC_TYPE_STR, "Ljava/lang/String;");
 	}
 
 	/**
@@ -67,13 +91,13 @@ public class InvokerCompiler implements Opcodes {
 					}
 					continue;
 				}
-				if (current != '⟪')
+				if (current != INV_SEP_LEFT)
 					continue;
 				String innerInvoker = "";
 				int parenCount = 1;
 				while (idx < invDefinition.length()) {
 					char c = invDefinition.charAt(idx++);
-					if (c == '⟫') {
+					if (c == INV_SEP_RIGHT) {
 						--parenCount;
 						if (parenCount == 0) {
 							break;

@@ -435,6 +435,7 @@ public class ModuleDiscoveryManager {
 									ti.setType(Type.BASIC_OBJECT);
 									ti.setJavaClassName(Object.class.getName());
 									ti.setJavaTypeName("L" + Utils.dots2slashes(Object.class.getName()) + ";");
+									ti.setPackageName(type);
 									TypeProxy p = new TypeProxy(null);
 									p.setType(ti);
 									pList.add(p);
@@ -446,6 +447,7 @@ public class ModuleDiscoveryManager {
 									ti.setType(Type.BASIC);
 									ti.setJavaClassName(int.class.getName());
 									ti.setJavaTypeName("I");
+									ti.setPackageName(type);
 									TypeProxy p = new TypeProxy(null);
 									p.setType(ti);
 									pList.add(p);
@@ -457,6 +459,7 @@ public class ModuleDiscoveryManager {
 									ti.setType(Type.BASIC);
 									ti.setJavaClassName(long.class.getName());
 									ti.setJavaTypeName("J");
+									ti.setPackageName(type);
 									TypeProxy p = new TypeProxy(null);
 									p.setType(ti);
 									pList.add(p);
@@ -468,6 +471,7 @@ public class ModuleDiscoveryManager {
 									ti.setType(Type.BASIC);
 									ti.setJavaClassName(float.class.getName());
 									ti.setJavaTypeName("F");
+									ti.setPackageName(type);
 									TypeProxy p = new TypeProxy(null);
 									p.setType(ti);
 									pList.add(p);
@@ -479,6 +483,19 @@ public class ModuleDiscoveryManager {
 									ti.setType(Type.BASIC);
 									ti.setJavaClassName(double.class.getName());
 									ti.setJavaTypeName("D");
+									ti.setPackageName(type);
+									TypeProxy p = new TypeProxy(null);
+									p.setType(ti);
+									pList.add(p);
+									continue;
+								}
+								
+								if ("byt".equals(type)) {
+									TypeInformation ti = new TypeInformation();
+									ti.setType(Type.BASIC);
+									ti.setJavaClassName(byte.class.getName());
+									ti.setJavaTypeName("B");
+									ti.setPackageName(type);
 									TypeProxy p = new TypeProxy(null);
 									p.setType(ti);
 									pList.add(p);
@@ -490,6 +507,7 @@ public class ModuleDiscoveryManager {
 									ti.setType(Type.BASIC);
 									ti.setJavaClassName(boolean.class.getName());
 									ti.setJavaTypeName("Z");
+									ti.setPackageName(type);
 									TypeProxy p = new TypeProxy(null);
 									p.setType(ti);
 									pList.add(p);
@@ -501,6 +519,7 @@ public class ModuleDiscoveryManager {
 									ti.setType(Type.BASIC);
 									ti.setJavaClassName(char.class.getName());
 									ti.setJavaTypeName("C");
+									ti.setPackageName(type);
 									TypeProxy p = new TypeProxy(null);
 									p.setType(ti);
 									pList.add(p);
@@ -512,6 +531,7 @@ public class ModuleDiscoveryManager {
 									ti.setType(Type.BASIC_OBJECT);
 									ti.setJavaClassName(Integer.class.getName());
 									ti.setJavaTypeName("L" + Utils.dots2slashes(Integer.class.getName()) + ";");
+									ti.setPackageName(type);
 									TypeProxy p = new TypeProxy(null);
 									p.setType(ti);
 									pList.add(p);
@@ -523,6 +543,7 @@ public class ModuleDiscoveryManager {
 									ti.setType(Type.BASIC_OBJECT);
 									ti.setJavaClassName(Long.class.getName());
 									ti.setJavaTypeName("L" + Utils.dots2slashes(Long.class.getName()) + ";");
+									ti.setPackageName(type);
 									TypeProxy p = new TypeProxy(null);
 									p.setType(ti);
 									pList.add(p);
@@ -534,6 +555,7 @@ public class ModuleDiscoveryManager {
 									ti.setType(Type.BASIC_OBJECT);
 									ti.setJavaClassName(Float.class.getName());
 									ti.setJavaTypeName("L" + Utils.dots2slashes(Float.class.getName()) + ";");
+									ti.setPackageName(type);
 									TypeProxy p = new TypeProxy(null);
 									p.setType(ti);
 									pList.add(p);
@@ -545,6 +567,19 @@ public class ModuleDiscoveryManager {
 									ti.setType(Type.BASIC_OBJECT);
 									ti.setJavaClassName(Double.class.getName());
 									ti.setJavaTypeName("L" + Utils.dots2slashes(Double.class.getName()) + ";");
+									ti.setPackageName(type);
+									TypeProxy p = new TypeProxy(null);
+									p.setType(ti);
+									pList.add(p);
+									continue;
+								}
+								
+								if ("Byt".equals(type)) {
+									TypeInformation ti = new TypeInformation();
+									ti.setType(Type.BASIC_OBJECT);
+									ti.setJavaClassName(Byte.class.getName());
+									ti.setJavaTypeName("L" + Utils.dots2slashes(Byte.class.getName()) + ";");
+									ti.setPackageName(type);
 									TypeProxy p = new TypeProxy(null);
 									p.setType(ti);
 									pList.add(p);
@@ -556,6 +591,7 @@ public class ModuleDiscoveryManager {
 									ti.setType(Type.BASIC_OBJECT);
 									ti.setJavaClassName(Boolean.class.getName());
 									ti.setJavaTypeName("L" + Utils.dots2slashes(Boolean.class.getName()) + ";");
+									ti.setPackageName(type);
 									TypeProxy p = new TypeProxy(null);
 									p.setType(ti);
 									pList.add(p);
@@ -567,6 +603,7 @@ public class ModuleDiscoveryManager {
 									ti.setType(Type.BASIC_OBJECT);
 									ti.setJavaClassName(Character.class.getName());
 									ti.setJavaTypeName("L" + Utils.dots2slashes(Character.class.getName()) + ";");
+									ti.setPackageName(type);
 									TypeProxy p = new TypeProxy(null);
 									p.setType(ti);
 									pList.add(p);
@@ -578,6 +615,7 @@ public class ModuleDiscoveryManager {
 									ti.setType(Type.BASIC_OBJECT);
 									ti.setJavaClassName(String.class.getName());
 									ti.setJavaTypeName("L" + Utils.dots2slashes(String.class.getName()) + ";");
+									ti.setPackageName(type);
 									TypeProxy p = new TypeProxy(null);
 									p.setType(ti);
 									pList.add(p);
@@ -647,13 +685,120 @@ public class ModuleDiscoveryManager {
 						if (!p.isResolved())
 							continue outer;
 					}
-					// TODO: create invokers
+
+					invoker.setInvokerType(generateInvokerType(proxies, true));
 				}
 			}
 		} catch (Exception e) {
 			throw new CompilationException(e);
 		}
 
+	}
+
+	private String generateInvokerType(List<TypeProxy> proxies, boolean mainInvoker) {
+		String invoker = "";
+		if (mainInvoker) {
+			invoker += Constants.PD_CLASSTYPE_INVOKER;
+		} else {
+			invoker += InvokerCompiler.INV_SEP_LEFT;
+		}
+		
+		for (TypeProxy proxy : proxies) {
+			if (!proxy.isResolved())
+				return null;
+			if (proxy.isInvokerType()) {
+				@SuppressWarnings("unchecked")
+				String subinvoker = generateInvokerType((List<TypeProxy>) proxy.getType()
+						.getCarryData(), false);
+				if (subinvoker == null)
+					return null;
+				invoker += subinvoker;
+			} else {
+				TypeInformation ti = proxy.getType();
+				switch (ti.getType()) {
+				case BASIC:
+					if ("Byt".equals(ti.getPackageName())) {
+						invoker += InvokerCompiler.OBJ_TYPE_BYTE;
+					}
+					
+					if ("Bol".equals(ti.getPackageName())) {
+						invoker += InvokerCompiler.OBJ_TYPE_BOOL;
+					}
+					
+					if ("Int".equals(ti.getPackageName())) {
+						invoker += InvokerCompiler.OBJ_TYPE_INT;
+					}
+					
+					if ("Lng".equals(ti.getPackageName())) {
+						invoker += InvokerCompiler.OBJ_TYPE_LONG;
+					}
+					
+					if ("Flt".equals(ti.getPackageName())) {
+						invoker += InvokerCompiler.OBJ_TYPE_FLOAT;
+					}
+					
+					if ("Dbl".equals(ti.getPackageName())) {
+						invoker += InvokerCompiler.OBJ_TYPE_DOUBLE;
+					}
+					
+					if ("Chr".equals(ti.getPackageName())) {
+						invoker += InvokerCompiler.OBJ_TYPE_CHAR;
+					}
+					break;
+				case BASIC_OBJECT:
+					if ("byt".equals(ti.getPackageName())) {
+						invoker += InvokerCompiler.BASIC_TYPE_BYTE;
+					}
+					
+					if ("bol".equals(ti.getPackageName())) {
+						invoker += InvokerCompiler.BASIC_TYPE_BOOL;
+					}
+					
+					if ("int".equals(ti.getPackageName())) {
+						invoker += InvokerCompiler.BASIC_TYPE_INT;
+					}
+					
+					if ("lng".equals(ti.getPackageName())) {
+						invoker += InvokerCompiler.BASIC_TYPE_LONG;
+					}
+					
+					if ("flt".equals(ti.getPackageName())) {
+						invoker += InvokerCompiler.BASIC_TYPE_FLOAT;
+					}
+					
+					if ("dbl".equals(ti.getPackageName())) {
+						invoker += InvokerCompiler.BASIC_TYPE_DOUBLE;
+					}
+					
+					if ("chr".equals(ti.getPackageName())) {
+						invoker += InvokerCompiler.BASIC_TYPE_CHAR;
+					}
+					
+					if ("str".equals(ti.getPackageName())) {
+						invoker += InvokerCompiler.BASIC_TYPE_STR;
+					}
+					
+					if ("any".equals(ti.getPackageName())) {
+						invoker += InvokerCompiler.OBJ_TYPE_ANY;
+					}					
+					break;
+				case CUSTOM:
+				case MODULE:
+					invoker += InvokerCompiler.OBJ_TYPE_ANY;
+					break;
+				case FOREIGN:
+				case FOREIGN_FUNC:
+				case FUNCTION:
+				case STATIC_FUNCTION:
+					throw new CompilationException("Invoker can't have static function component");
+				}
+			}
+		}
+		
+		if (!mainInvoker) {
+			invoker += InvokerCompiler.INV_SEP_RIGHT;
+		}
+		return invoker;
 	}
 
 }
